@@ -9,10 +9,23 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
 
+from pymongo import MongoClient
 load_dotenv()
+MONGO_URL = os.getenv('MONGO_URL')
+MONGO_DB_NAME = os.getenv('MONGO_DB_NAME')
+
+# Connect to MongoDB
+client = MongoClient(MONGO_URL)
+
+# Access the database
+db = client[MONGO_DB_NAME]
+
+
+
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,13 +35,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7)u&cb*%a&-hf4tu#k3t$4saopk0#8khh5rz80t#tt)gza0)k$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -40,6 +51,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +63,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -78,20 +93,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
-        'NAME': os.getenv('MONGO_DB_NAME'),
-        'HOST': os.getenv('MONGO_HOST'),
-        'PORT': os.getenv('MONGO_PORT'),
-        'USER': os.getenv('MONGO_USER'),
-        'PASSWORD': os.getenv('MONGO_PASSWORD'),
-        'AUTH_SOURCE': os.getenv('MONGO_AUTH_SOURCE'),
-        'ENFORCE_SCHEMA': False,
-        'OPTIONS': {
-            'retryWrites': True,
-            'w': os.getenv('MONGO_W')
-        }
+        'ENGINE': 'django.db.backends.dummy',
+        'NAME': 'mongodb_database',  # Placeholder
     }
 }
+
 
 
 # Password validation
@@ -134,3 +140,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOW_ALL_ORIGINS: True
